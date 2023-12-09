@@ -1,17 +1,13 @@
-import dash
-import dash_core_components as dcc
-import dash_html_components as html
-from dash.dependencies import Output, Input
+# import libraries
+import dash, pandas as pd, numpy as np, plotly.express as px
+from dash import dcc, html
+from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
-import pandas as pd
-import plotly.express as px
 
-df = pd.read_csv('politics.csv')
-#you can also read your data like this:
-# df = pd.read_csv('/home/charmingdata1/demo-app3/politics.csv')
+# read dataset
+df = pd.read_csv("politics.csv")
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-# server = app.server
 
 # radioItem list for the layout (long_code.py lines 13-45)
 radio_list = []
@@ -56,7 +52,7 @@ app.layout = html.Div([
         dbc.Col(dcc.Graph(id='my-bar', figure={},
                           config={'displayModeBar': False}), xs=6, sm=6, md=6, lg=4, xl=4)
 
-    ])
+    ],)
 ])
 
 
