@@ -1,32 +1,28 @@
-import os
+import dash
+from dash import dcc, html
+import plotly.express as px
+import pandas as pd
 
-from flask import (Flask, redirect, render_template, request,
-                   send_from_directory, url_for)
+# Sample data
+data = {
+    'Category': ['A', 'B', 'C', 'D'],
+    'Value': [4, 7, 1, 3]
+}
 
-app = Flask(__name__)
+df = pd.DataFrame(data)
 
+# Create Dash app
+app = dash.Dash(__name__)
 
-@app.route('/')
-def index():
-   print('Request for index page received')
-   return render_template('index.html')
-
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'),
-                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
-
-@app.route('/hello', methods=['POST'])
-def hello():
-   name = request.form.get('name')
-
-   if name:
-       print('Request for hello page received with name=%s' % name)
-       return render_template('hello.html', name = name)
-   else:
-       print('Request for hello page received with no name or blank name -- redirecting')
-       return redirect(url_for('index'))
-
+# Layout of the app
+app.layout = html.Div(children=[
+    html.H1("Simple Dash App with Bar Chart"),
+    
+    dcc.Graph(
+        id='simple-bar-chart',
+        figure=px.bar(df, x='Category', y='Value', title='Simple Bar Chart')
+    )
+])
 
 if __name__ == '__main__':
-   app.run()
+    app.run_server(debug=False)
