@@ -5,7 +5,7 @@ from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 
 # read dataset
-df = pd.read_csv("politics.csv")
+df = pd.read_csv("https://raw.githubusercontent.com/ovie-ow/megaco/main/politics.csv")
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
