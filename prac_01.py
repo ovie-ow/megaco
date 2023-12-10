@@ -1,45 +1,32 @@
-import dash
-import dash_core_components as dcc
-import dash_bootstrap_components as dbc  # pip install dash-bootstrap-components
-import dash_html_components as html
-from dash.dependencies import Input, Output
-import plotly.express as px
+import os
 
-import pandas as pd
+from flask import (Flask, redirect, render_template, request,
+                   send_from_directory, url_for)
 
-df = pd.read_csv('assets/data/gapminderDataFiveYear.csv')
-
-dash_app = dash.Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
-app = dash_app.server
-
-dash_app.layout = html.Div([
-    dcc.Graph(id='graph-with-slider'),
-    dcc.Slider(
-        id='year-slider',
-        min=df['year'].min(),
-        max=df['year'].max(),
-        value=df['year'].min(),
-        marks={str(year): str(year) for year in df['year'].unique()},
-        step=None
-    )
-])
+app = Flask(__name__)
 
 
-@dash_app.callback(
-    Output('graph-with-slider', 'figure'),
-    Input('year-slider', 'value'))
+@app.route('/')
+def index():
+   print('Request for index page received')
+   return render_template('index.html')
 
-def update_figure(selected_year):
-    filtered_df = df[df.year == selected_year]
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-    fig = px.scatter(filtered_df, x="gdpPercap", y="lifeExp",
-                     size="pop", color="continent", hover_name="country",
-                     log_x=True, size_max=55, template="plotly_dark")
+@app.route('/hello', methods=['POST'])
+def hello():
+   name = request.form.get('name')
 
-    fig.update_layout(transition_duration=500)
-
-    return fig
+   if name:
+       print('Request for hello page received with name=%s' % name)
+       return render_template('hello.html', name = name)
+   else:
+       print('Request for hello page received with no name or blank name -- redirecting')
+       return redirect(url_for('index'))
 
 
 if __name__ == '__main__':
-    dash_app.run_server(debug=True)
+   app.run()
